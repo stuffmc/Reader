@@ -83,7 +83,7 @@
 
 #pragma mark - Properties
 
-@synthesize delegate, scrollDirection;
+@synthesize delegate, scrollDirection, pagingEnabled;
 
 #pragma mark - ReaderViewController methods
 
@@ -325,6 +325,8 @@
 			[object updateDocumentProperties]; document = object; // Retain the supplied ReaderDocument object for our use
 
 			[ReaderThumbCache touchThumbCacheWithGUID:object.guid]; // Touch the document thumb cache directory
+
+			pagingEnabled = YES; // By Default like in the past
 		}
 		else // Invalid ReaderDocument object
 		{
@@ -369,7 +371,8 @@
 	theScrollView = [[UIScrollView alloc] initWithFrame:scrollViewRect]; // All
 	theScrollView.autoresizesSubviews = NO; theScrollView.contentMode = UIViewContentModeRedraw;
 	theScrollView.showsHorizontalScrollIndicator = NO; theScrollView.showsVerticalScrollIndicator = NO;
-	theScrollView.scrollsToTop = NO; theScrollView.delaysContentTouches = NO; theScrollView.pagingEnabled = YES;
+	theScrollView.scrollsToTop = NO; theScrollView.delaysContentTouches = NO;
+	theScrollView.pagingEnabled = pagingEnabled;
 	theScrollView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	theScrollView.backgroundColor = [UIColor clearColor]; theScrollView.delegate = self;
 	[self.view addSubview:theScrollView];

@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, ReaderScrollDirection) {
 
 @property (nonatomic, weak, readwrite) id <ReaderViewControllerDelegate> delegate;
 @property (nonatomic, assign, readwrite) ReaderScrollDirection scrollDirection;
+@property (nonatomic,getter=isPagingEnabled) BOOL pagingEnabled;
 
 - (instancetype)initWithReaderDocument:(ReaderDocument *)object;
 
