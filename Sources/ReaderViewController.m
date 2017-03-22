@@ -101,10 +101,16 @@
 
 - (void)updateContentSize:(UIScrollView *)scrollView
 {
-	CGFloat contentHeight = scrollView.bounds.size.height; // Height
+    CGFloat contentHeight;
+    CGFloat contentWidth;
 
-	CGFloat contentWidth = (scrollView.bounds.size.width * maximumPage);
-
+	if (self.shouldScrollHorizontally) {
+		contentHeight = scrollView.bounds.size.height;
+		contentWidth = scrollView.bounds.size.width * maximumPage;
+	} else {
+		contentHeight = scrollView.bounds.size.height * maximumPage;
+		contentWidth = scrollView.bounds.size.width;
+	}
 	scrollView.contentSize = CGSizeMake(contentWidth, contentHeight);
 }
 
@@ -118,8 +124,12 @@
 			NSInteger page = [key integerValue]; // Page number value
 
 			CGRect viewRect = CGRectZero; viewRect.size = scrollView.bounds.size;
-
-			viewRect.origin.x = (viewRect.size.width * (page - 1)); // Update X
+          
+			if (self.shouldScrollHorizontally) {
+				viewRect.origin.x = (viewRect.size.width * (page - 1)); // Update X
+            } else {
+                viewRect.origin.y = (viewRect.size.height * (page - 1)); // Update Y
+			}
 
 			contentView.frame = CGRectInset(viewRect, scrollViewOutset, 0.0f);
 		}
@@ -127,7 +137,7 @@
 
 	NSInteger page = currentPage; // Update scroll view offset to current page
 
-	CGPoint contentOffset = CGPointMake((scrollView.bounds.size.width * (page - 1)), 0.0f);
+	CGPoint contentOffset = CGPointMake((self.gap * (page - 1)), 0.0f);
 
 	if (CGPointEqualToPoint(scrollView.contentOffset, contentOffset) == false) // Update
 	{
@@ -143,7 +153,12 @@
 {
 	CGRect viewRect = CGRectZero; viewRect.size = scrollView.bounds.size;
 
-	viewRect.origin.x = (viewRect.size.width * (page - 1)); viewRect = CGRectInset(viewRect, scrollViewOutset, 0.0f);
+    if (self.shouldScrollHorizontally) {
+		viewRect.origin.x = (viewRect.size.width * (page - 1)); // Update X
+    } else {
+		viewRect.origin.y = (viewRect.size.height * (page - 1)); // Update Y
+    }
+    viewRect = CGRectInset(viewRect, scrollViewOutset, 0.0f);
 
 	NSURL *fileURL = document.fileURL; NSString *phrase = document.password; NSString *guid = document.guid; // Document properties
 
@@ -156,13 +171,8 @@
 
 - (void)layoutContentViews:(UIScrollView *)scrollView
 {
-	CGFloat viewWidth = scrollView.bounds.size.width; // View width
-
-	CGFloat contentOffsetX = scrollView.contentOffset.x; // Content offset X
-
-	NSInteger pageB = ((contentOffsetX + viewWidth - 1.0f) / viewWidth); // Pages
-
-	NSInteger pageA = (contentOffsetX / viewWidth); pageB += 2; // Add extra pages
+    NSInteger pageB = ((self.offset + self.gap - 1.0f) / self.gap); // Pages
+    NSInteger pageA = (self.offset / self.gap); pageB += 2; // Add extra pages
 
 	if (pageA < minimumPage) pageA = minimumPage; if (pageB > maximumPage) pageB = maximumPage;
 
@@ -218,11 +228,7 @@
 
 - (void)handleScrollViewDidEnd:(UIScrollView *)scrollView
 {
-	CGFloat viewWidth = scrollView.bounds.size.width; // Scroll view width
-
-	CGFloat contentOffsetX = scrollView.contentOffset.x; // Content offset X
-
-	NSInteger page = (contentOffsetX / viewWidth); page++; // Page number
+    NSInteger page = (self.offset / self.gap); page++; // Page number
 
 	if (page != currentPage) // Only if on different page
 	{
@@ -249,7 +255,7 @@
 
 		currentPage = page; document.pageNumber = [NSNumber numberWithInteger:page];
 
-		CGPoint contentOffset = CGPointMake((theScrollView.bounds.size.width * (page - 1)), 0.0f);
+		CGPoint contentOffset = CGPointMake((self.gap * (page - 1)), 0.0f);
 
 		if (CGPointEqualToPoint(theScrollView.contentOffset, contentOffset) == true)
 			[self layoutContentViews:theScrollView];
@@ -314,7 +320,7 @@
 
 			[notificationCenter addObserver:self selector:@selector(applicationWillResign:) name:UIApplicationWillResignActiveNotification object:nil];
 
-			scrollViewOutset = ((userInterfaceIdiom == UIUserInterfaceIdiomPad) ? SCROLLVIEW_OUTSET_LARGE : SCROLLVIEW_OUTSET_SMALL);
+			scrollViewOutset = (userInterfaceIdiom == UIUserInterfaceIdiomPad ? SCROLLVIEW_OUTSET_LARGE : SCROLLVIEW_OUTSET_SMALL);
 
 			[object updateDocumentProperties]; document = object; // Retain the supplied ReaderDocument object for our use
 
@@ -544,7 +550,7 @@
 	{
 		CGPoint contentOffset = theScrollView.contentOffset; // Offset
 
-		contentOffset.x -= theScrollView.bounds.size.width; // View X--
+		contentOffset.x -= self.gap;
 
 		[theScrollView setContentOffset:contentOffset animated:YES];
 	}
@@ -556,7 +562,7 @@
 	{
 		CGPoint contentOffset = theScrollView.contentOffset; // Offset
 
-		contentOffset.x += theScrollView.bounds.size.width; // View X++
+		contentOffset.x += self.gap;
 
 		[theScrollView setContentOffset:contentOffset animated:YES];
 	}
