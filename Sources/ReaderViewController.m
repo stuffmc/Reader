@@ -36,6 +36,8 @@
 
 @interface ReaderViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate, UIDocumentInteractionControllerDelegate,
 									ReaderMainToolbarDelegate, ReaderMainPagebarDelegate, ReaderContentViewDelegate, ThumbsViewControllerDelegate>
+
+    - (BOOL)shouldScrollHorizontally;
 @end
 
 @implementation ReaderViewController
@@ -81,9 +83,21 @@
 
 #pragma mark - Properties
 
-@synthesize delegate;
+@synthesize delegate, scrollDirection;
 
 #pragma mark - ReaderViewController methods
+
+- (CGFloat)gap {
+	return self.shouldScrollHorizontally ? theScrollView.bounds.size.width : theScrollView.bounds.size.height;
+}
+
+- (CGFloat)offset {
+	return self.shouldScrollHorizontally ? theScrollView.contentOffset.x : theScrollView.contentOffset.y;
+}
+
+- (BOOL)shouldScrollHorizontally {
+    return scrollDirection == ReaderScrollDirectionHorizontal;
+}
 
 - (void)updateContentSize:(UIScrollView *)scrollView
 {
