@@ -56,7 +56,9 @@
 
 #define STATUS_HEIGHT 20.0f
 
-#define TOOLBAR_HEIGHT 44.0f
+#ifndef TOOLBAR_HEIGHT
+    #define TOOLBAR_HEIGHT 44.0f
+#endif
 
 #define PAGE_THUMB_SMALL 160
 #define PAGE_THUMB_LARGE 256

@@ -73,8 +73,13 @@
 
 #define STATUS_HEIGHT 20.0f
 
-#define TOOLBAR_HEIGHT 44.0f
-#define PAGEBAR_HEIGHT 48.0f
+#ifndef PAGEBAR_HEIGHT
+    #define PAGEBAR_HEIGHT 48.0f
+#endif
+
+#ifndef TOOLBAR_HEIGHT
+    #define TOOLBAR_HEIGHT 44.0f
+#endif
 
 #define SCROLLVIEW_OUTSET_SMALL 4.0f
 #define SCROLLVIEW_OUTSET_LARGE 8.0f
@@ -377,16 +382,22 @@
 	theScrollView.backgroundColor = [UIColor clearColor]; theScrollView.delegate = self;
 	[self.view addSubview:theScrollView];
 
-	CGRect toolbarRect = viewRect; toolbarRect.size.height = TOOLBAR_HEIGHT;
-	mainToolbar = [[ReaderMainToolbar alloc] initWithFrame:toolbarRect document:document]; // ReaderMainToolbar
-	mainToolbar.delegate = self; // ReaderMainToolbarDelegate
-	[self.view addSubview:mainToolbar];
+	CGRect toolbarRect = viewRect;
+	toolbarRect.size.height = TOOLBAR_HEIGHT;
+	if (toolbarRect.size.height > 0) {
+		mainToolbar = [[ReaderMainToolbar alloc] initWithFrame:toolbarRect document:document]; // ReaderMainToolbar
+		mainToolbar.delegate = self; // ReaderMainToolbarDelegate
+		[self.view addSubview:mainToolbar];
+	}
 
-	CGRect pagebarRect = self.view.bounds; pagebarRect.size.height = PAGEBAR_HEIGHT;
-	pagebarRect.origin.y = (self.view.bounds.size.height - pagebarRect.size.height);
-	mainPagebar = [[ReaderMainPagebar alloc] initWithFrame:pagebarRect document:document]; // ReaderMainPagebar
-	mainPagebar.delegate = self; // ReaderMainPagebarDelegate
-	[self.view addSubview:mainPagebar];
+	CGRect pagebarRect = self.view.bounds;
+	pagebarRect.size.height = PAGEBAR_HEIGHT;
+	if (pagebarRect.size.height > 0) {
+		pagebarRect.origin.y = (self.view.bounds.size.height - pagebarRect.size.height);
+		mainPagebar = [[ReaderMainPagebar alloc] initWithFrame:pagebarRect document:document]; // ReaderMainPagebar
+		mainPagebar.delegate = self; // ReaderMainPagebarDelegate
+		[self.view addSubview:mainPagebar];
+	}
 
 	if (fakeStatusBar != nil) [self.view addSubview:fakeStatusBar]; // Add status bar background view
 

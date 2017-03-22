@@ -149,6 +149,9 @@ it is tapped.
 
 `READER_BOOKMARKS` - If TRUE, enables page bookmark support.
 
+`TOOLBAR_HEIGHT` - Size of the toolbar. If 0 than it won't even be loaded.
+`PAGEBAR_HEIGHT` - Size of the page bar (mini thumbnails at the bottom). If 0 than it won't even be loaded.
+
 ### ReaderDocument Archiving
 
 To change where the property list for ReaderDocument objects is stored
