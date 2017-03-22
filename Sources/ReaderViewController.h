@@ -37,9 +37,16 @@
 
 @end
 
+
+typedef NS_ENUM(NSInteger, ReaderScrollDirection) {
+    ReaderScrollDirectionHorizontal,
+    ReaderScrollDirectionVertical
+};
+
 @interface ReaderViewController : UIViewController
 
 @property (nonatomic, weak, readwrite) id <ReaderViewControllerDelegate> delegate;
+@property (nonatomic, assign, readwrite) ReaderScrollDirection scrollDirection;
 
 - (instancetype)initWithReaderDocument:(ReaderDocument *)object;
 
